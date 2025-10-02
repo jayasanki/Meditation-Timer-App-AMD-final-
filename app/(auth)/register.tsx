@@ -183,8 +183,19 @@ export default function RegisterScreen() {
               )}
             </TouchableOpacity>
 
+             {/* Demo Fill Button */}
+            <TouchableOpacity 
+              style={styles.demoButton}
+              onPress={handleDemoFill}
+              disabled={loading}
+            >
+              <Text style={styles.demoButtonText}>Fill Demo Data</Text>
+            </TouchableOpacity>
 
             
+
+
+
 
 
           
