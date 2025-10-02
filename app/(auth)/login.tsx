@@ -40,7 +40,26 @@ export default function LoginScreen() {
             <Text style={styles.subtitle}>Find your inner peace</Text>
           </View>
 
-          
+          {/* Login Form */}
+          <View style={styles.form}>
+            <Text style={styles.formTitle}>Welcome Back</Text>
+            <Text style={styles.formSubtitle}>Sign in to continue your journey</Text>
+            
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Email Address</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your email"
+                placeholderTextColor="#999"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                autoComplete="email"
+              />
+            </View>
+
+            
           
       </ScrollView>
     </KeyboardAvoidingView>
