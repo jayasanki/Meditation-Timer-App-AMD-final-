@@ -206,6 +206,169 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return Math.max(longestStreak, currentStreak);
   };
 
+   const login = async (email: string, password: string) => {
+    try {
+      setLoading(true);
+      const userData = await authService.login(email, password);
+      setUser(userData);
+      await loadSessions(userData.id);
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (email: string, password: string, name: string) => {
+    try {
+      setLoading(true);
+      const userData = await authService.register(email, password, name);
+      setUser(userData);
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      setLoading(true);
+      await authService.logout();
+      setUser(null);
+      setSessions([]);
+      setTimerState({
+        isRunning: false,
+        isPaused: false,
+        timeRemaining: 0,
+        totalDuration: 0
+      });
+      // Clear local storage
+      await AsyncStorage.multiRemove([STORAGE_KEYS.TIMER_STATE, STORAGE_KEYS.USER_SESSIONS]);
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+   const addSession = async (sessionData: Omit<MeditationSession, 'id' | 'userId'>) => {
+    if (!user) throw new Error('User not authenticated');
+
+    try {
+      const session: Omit<MeditationSession, 'id'> = {
+        ...sessionData,
+        userId: user.id
+      };
+
+      const sessionId = await meditationApi.createSession(session);
+      const newSession: MeditationSession = {
+        ...session,
+        id: sessionId
+      };
+
+      setSessions(prev => {
+        const updatedSessions = [newSession, ...prev];
+        saveSessionsToStorage(updatedSessions);
+        return updatedSessions;
+      });
+    } catch (error) {
+      // Fallback to local storage if online fails
+      const localSession: MeditationSession = {
+        ...sessionData,
+        id: `local_${Date.now()}`,
+        userId: user.id
+      };
+
+      setSessions(prev => {
+        const updatedSessions = [localSession, ...prev];
+        saveSessionsToStorage(updatedSessions);
+        return updatedSessions;
+      });
+      throw error;
+    }
+  };
+
+  const updateSession = async (sessionId: string, updates: Partial<MeditationSession>) => {
+    try {
+      await meditationApi.updateSession(sessionId, updates);
+      setSessions(prev => {
+        const updatedSessions = prev.map(session => 
+          session.id === sessionId ? { ...session, ...updates } : session
+        );
+        saveSessionsToStorage(updatedSessions);
+        return updatedSessions;
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const deleteSession = async (sessionId: string) => {
+    try {
+      await meditationApi.deleteSession(sessionId);
+      setSessions(prev => {
+        const updatedSessions = prev.filter(session => session.id !== sessionId);
+        saveSessionsToStorage(updatedSessions);
+        return updatedSessions;
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const refreshSessions = async () => {
+    if (!user) return;
+    try {
+      await loadSessions(user.id);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getSessionStats = (): MeditationStats => {
+    return stats;
+  };
+
+  const updateUserProfile = async (updates: { displayName?: string }) => {
+    if (!user) throw new Error('User not authenticated');
+    
+    try {
+      await authService.updateProfile(updates);
+      setUser(prev => prev ? { ...prev, name: updates.displayName || prev.name } : null);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      await authService.resetPassword(email);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const value: AuthContextType = {
+    user,
+    sessions,
+    timerState,
+    loading,
+    stats,
+    login,
+    register,
+    logout,
+    addSession,
+    updateSession,
+    deleteSession,
+    setTimerState,
+    refreshSessions,
+    getSessionStats,
+    updateUserProfile,
+    resetPassword
+  };
+
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
