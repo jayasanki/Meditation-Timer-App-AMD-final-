@@ -108,6 +108,16 @@ export const meditationApi = {
       throw new Error('Failed to update meditation session');
     }
   },
+
+   // Delete a session
+  async deleteSession(sessionId: string): Promise<void> {
+    try {
+      await deleteDoc(doc(db, 'meditationSessions', sessionId));
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      throw new Error('Failed to delete meditation session');
+    }
+  },
  
 };
 
