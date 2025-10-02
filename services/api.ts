@@ -53,7 +53,16 @@ export const meditationApi = {
     }
   },
 
-
+ // Update a session
+  async updateSession(sessionId: string, updates: Partial<MeditationSession>): Promise<void> {
+    try {
+      const sessionRef = doc(db, 'meditationSessions', sessionId);
+      await updateDoc(sessionRef, updates);
+    } catch (error) {
+      console.error('Error updating session:', error);
+      throw error;
+    }
+  },
  
 };
 
