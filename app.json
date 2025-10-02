@@ -24,7 +24,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#4A6572"
       },
-      "package": "com.meditation.timer"
+      "package": "com.meditation.timer",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
