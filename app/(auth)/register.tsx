@@ -42,7 +42,12 @@ export default function RegisterScreen() {
       Alert.alert('Error', 'Password must be at least 6 characters');
       return;
     }
-  
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
 
   return (
     <KeyboardAvoidingView 
