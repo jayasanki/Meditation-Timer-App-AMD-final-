@@ -54,7 +54,48 @@ export const authService = {
     }
   },
 
-  
+   // Login user
+  async login(email: string, password: string): Promise<User> {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      return {
+        id: user.uid,
+        email: user.email!,
+        name: user.displayName || user.email?.split('@')[0] || 'User',
+        createdAt: new Date().toISOString()
+      };
+    } catch (error: any) {
+      console.error('Login error:', error);
+      
+      // Handle specific Firebase auth errors
+      let errorMessage = 'Login failed. Please try again.';
+      
+      switch (error.code) {
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address.';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled.';
+          break;
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email.';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect password.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed attempts. Please try again later.';
+          break;
+      }
+      
+      throw new Error(errorMessage);
+    }
+  },
 
 };
 
