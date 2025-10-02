@@ -113,6 +113,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await loadSessionsFromStorage();
     }
   };
+   const loadSessionsFromStorage = async () => {
+    try {
+      const savedSessions = await AsyncStorage.getItem(STORAGE_KEYS.USER_SESSIONS);
+      if (savedSessions) {
+        setSessions(JSON.parse(savedSessions));
+      }
+    } catch (error) {
+      console.error('Error loading sessions from storage:', error);
+    }
+  };
+
+  const saveSessionsToStorage = async (sessionsToSave: MeditationSession[]) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.USER_SESSIONS, JSON.stringify(sessionsToSave));
+    } catch (error) {
+      console.error('Error saving sessions to storage:', error);
+    }
+  };
+
+  const updateStats = () => {
+    const completedSessions = sessions.filter(session => session.completed);
+    const totalSessions = completedSessions.length;
+    const totalMinutes = Math.floor(
+      completedSessions.reduce((sum, session) => sum + session.actualDuration, 0) / 60
+    );
+    const averageSessionTime = totalSessions > 0 ? Math.floor(totalMinutes / totalSessions) : 0;
+
+    // Calculate streak (simplified version)
+    const currentStreak = calculateCurrentStreak(completedSessions);
+    const longestStreak = calculateLongestStreak(completedSessions);
+
+    setStats({
+      totalSessions,
+      totalMinutes,
+      averageSessionTime,
+      currentStreak,
+      longestStreak
+    });
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
