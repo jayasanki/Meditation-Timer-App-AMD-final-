@@ -40,13 +40,19 @@ export const meditationApi = {
         orderBy('createdAt', 'desc')
       );
       
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt.toDate().toISOString(),
-        completedAt: doc.data().completedAt?.toDate().toISOString()
-      })) as MeditationSession[];
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+      return {
+          id: doc.id,
+          userId: data.userId,
+          duration: data.duration,
+          actualDuration: data.actualDuration,
+          completed: data.completed,
+          notes: data.notes,
+          createdAt: data.createdAt.toDate().toISOString(),
+          completedAt: data.completedAt?.toDate().toISOString()
+        } as MeditationSession;
+      });
     } catch (error) {
       console.error('Error getting sessions:', error);
       throw error;
