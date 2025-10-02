@@ -29,6 +29,36 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "meditation-reminders"
+        }
+      ],
+      [
+        "expo-router",
+        {
+          "origin": "meditation-timer://"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/your-project-id-here",
+      "fallbackToCacheTimeout": 0
+    },
+    "newArchEnabled": false
   }
 }
