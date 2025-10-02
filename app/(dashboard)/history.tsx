@@ -1,4 +1,3 @@
- 
 import React, { useState, useMemo } from 'react';
 import {
   View,
@@ -198,7 +197,7 @@ export default function HistoryScreen() {
         </View>
         
         <TouchableOpacity 
-          style={styles.deleteButton}
+          style={styles.deleteIconButton}
           onPress={() => handleDeleteSession(item.id)}
         >
           <Icon name="delete-outline" size={20} color="#F44336" />
@@ -407,7 +406,7 @@ export default function HistoryScreen() {
             
             <View style={styles.modalActions}>
               <TouchableOpacity 
-                style={[styles.modalButton, styles.deleteButton]}
+                style={[styles.modalButton, styles.deleteModalButton]}
                 onPress={() => {
                   if (selectedSession) {
                     handleDeleteSession(selectedSession.id);
@@ -416,7 +415,7 @@ export default function HistoryScreen() {
                 }}
               >
                 <Icon name="delete" size={20} color="white" />
-                <Text style={styles.deleteButtonText}>Delete Session</Text>
+                <Text style={styles.deleteModalButtonText}>Delete Session</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
@@ -627,7 +626,7 @@ const styles = StyleSheet.create({
   incompleteText: {
     color: '#FF9800'
   },
-  deleteButton: {
+  deleteIconButton: {
     padding: 4
   },
   emptyState: {
@@ -725,7 +724,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     gap: 8
   },
-  deleteButton: {
+  deleteModalButton: {
     backgroundColor: '#F44336'
   },
   closeModalButton: {
@@ -733,7 +732,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e9ecef'
   },
-  deleteButtonText: {
+  deleteModalButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: '600'
