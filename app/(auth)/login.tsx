@@ -109,6 +109,13 @@ export default function LoginScreen() {
             >
               <Text style={styles.demoButtonText}>Use Demo Account</Text>
             </TouchableOpacity>
+
+            {/* Divider */}
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or</Text>
+              <View style={styles.dividerLine} />
+            </View>
           
       </ScrollView>
     </KeyboardAvoidingView>
