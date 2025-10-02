@@ -62,6 +62,21 @@ export default function RegisterScreen() {
               />
             </View>
 
+            {/* Email Input */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Email Address</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your email"
+                placeholderTextColor="#999"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                autoComplete="email"
+              />
+            </View>
+
             
 
 
