@@ -155,6 +155,19 @@ export default function RegisterScreen() {
               )}
             </View>
 
+            {/* Password Requirements */}
+            <View style={styles.requirementsContainer}>
+              <Text style={styles.requirementsTitle}>Password must:</Text>
+              <Text style={[styles.requirement, password.length >= 6 && styles.requirementMet]}>
+                • Be at least 6 characters long
+              </Text>
+              <Text style={[styles.requirement, passwordsMatch && styles.requirementMet]}>
+                • Passwords must match
+              </Text>
+            </View>
+
+            
+
 
           
         </View>
