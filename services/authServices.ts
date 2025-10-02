@@ -216,6 +216,24 @@ export const authService = {
   isLoggedIn(): boolean {
     return !!auth.currentUser;
   },
+
+  // Get auth state changes (for real-time auth state monitoring)
+  onAuthStateChanged(callback: (user: User | null) => void): () => void {
+    return auth.onAuthStateChanged((firebaseUser) => {
+      if (firebaseUser) {
+        const user: User = {
+          id: firebaseUser.uid,
+          email: firebaseUser.email!,
+          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+          createdAt: new Date().toISOString()
+        };
+        callback(user);
+      } else {
+        callback(null);
+      }
+    });
+  },
+
 };
 
 // Export for use in other parts of the application
