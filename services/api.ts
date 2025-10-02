@@ -147,7 +147,38 @@ export const meditationApi = {
       throw new Error('Failed to fetch user statistics');
     }
   },
-
+ // Get recent sessions (last 7 days)
+  async getRecentSessions(userId: string): Promise<MeditationSession[]> {
+    try {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      
+      const q = query(
+        collection(db, 'meditationSessions'),
+        where('userId', '==', userId),
+        where('createdAt', '>=', Timestamp.fromDate(oneWeekAgo)),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          userId: data.userId,
+          duration: data.duration,
+          actualDuration: data.actualDuration,
+          completed: data.completed,
+          notes: data.notes,
+          createdAt: data.createdAt.toDate().toISOString(),
+          completedAt: data.completedAt?.toDate().toISOString()
+        } as MeditationSession;
+      });
+    } catch (error) {
+      console.error('Error getting recent sessions:', error);
+      throw new Error('Failed to fetch recent sessions');
+    }
+  }
  
 };
 
