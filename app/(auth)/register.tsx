@@ -89,7 +89,8 @@ export default function RegisterScreen() {
     if (pass.length < 10) return { strength: 3, text: 'Good', color: '#ffc107' };
     return { strength: 4, text: 'Strong', color: '#28a745' };
   };
-
+ const passwordStrength = getPasswordStrength(password);
+  const passwordsMatch = password === confirmPassword && confirmPassword.length > 0;
   
 
   return (
