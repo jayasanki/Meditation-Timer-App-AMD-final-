@@ -144,6 +144,17 @@ export default function RegisterScreen() {
                 </Text>
               </TouchableOpacity>
 
+              {/* Password Match Indicator */}
+              {confirmPassword.length > 0 && (
+                <Text style={[
+                  styles.passwordMatchText,
+                  passwordsMatch ? styles.passwordMatchValid : styles.passwordMatchError
+                ]}>
+                  {passwordsMatch ? '✓ Passwords match' : '✗ Passwords do not match'}
+                </Text>
+              )}
+            </View>
+
 
           
         </View>
