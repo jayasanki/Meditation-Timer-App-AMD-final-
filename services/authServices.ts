@@ -212,6 +212,10 @@ export const authService = {
       throw new Error(errorMessage);
     }
   },
+  // Check if user is logged in
+  isLoggedIn(): boolean {
+    return !!auth.currentUser;
+  },
 };
 
 // Export for use in other parts of the application
