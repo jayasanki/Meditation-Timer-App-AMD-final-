@@ -186,7 +186,32 @@ export const authService = {
       throw new Error(errorMessage);
     }
   },
+ // Update user password
+  async updateUserPassword(newPassword: string): Promise<void> {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('No user logged in');
+      }
 
+      await updatePassword(user, newPassword);
+    } catch (error: any) {
+      console.error('Password update error:', error);
+      
+      let errorMessage = 'Failed to update password. Please try again.';
+      
+      switch (error.code) {
+        case 'auth/requires-recent-login':
+          errorMessage = 'Please log in again to update your password.';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password should be at least 6 characters.';
+          break;
+      }
+      
+      throw new Error(errorMessage);
+    }
+  },
 };
 
 // Export for use in other parts of the application
