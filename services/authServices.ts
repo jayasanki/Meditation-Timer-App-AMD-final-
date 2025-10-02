@@ -143,7 +143,20 @@ export const authService = {
       throw new Error(errorMessage);
     }
   },
+  // Update user profile
+  async updateProfile(updates: { displayName?: string; photoURL?: string }): Promise<void> {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('No user logged in');
+      }
 
+      await updateProfile(user, updates);
+    } catch (error: any) {
+      console.error('Profile update error:', error);
+      throw new Error('Failed to update profile. Please try again.');
+    }
+  },
 };
 
 // Export for use in other parts of the application
