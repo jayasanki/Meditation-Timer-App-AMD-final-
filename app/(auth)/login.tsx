@@ -45,6 +45,13 @@ export default function LoginScreen() {
       setLoading(false);
     }
   };
+  const handleForgotPassword = () => {
+    Alert.alert(
+      'Forgot Password',
+      'Password reset feature will be implemented soon!',
+      [{ text: 'OK' }]
+    );
+  };
   
   };
 
