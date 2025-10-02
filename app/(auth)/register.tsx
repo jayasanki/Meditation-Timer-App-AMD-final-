@@ -1,0 +1,62 @@
+ 
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  ActivityIndicator
+} from 'react-native';
+import { Link, router } from 'expo-router';
+import { useAuth } from '@/context/AuthContext';
+
+export default function RegisterScreen() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { register } = useAuth();
+
+  
+
+  return (
+    <KeyboardAvoidingView 
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.content}>
+          {/* Header Section */}
+          <View style={styles.header}>
+            <Text style={styles.title}>🧘 Create Account</Text>
+            <Text style={styles.subtitle}>Start your meditation journey</Text>
+          </View>
+
+          {/* Registration Form */}
+          <View style={styles.form}>
+            <Text style={styles.formTitle}>Join Our Community</Text>
+            <Text style={styles.formSubtitle}>Create your account to begin</Text>
+            
+            
+
+            
+
+
+          
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
