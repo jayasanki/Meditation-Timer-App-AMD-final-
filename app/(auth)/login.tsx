@@ -27,7 +27,24 @@ export default function LoginScreen() {
       return;
     }
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
 
+    setLoading(true);
+    
+    try {
+      await login(email, password);
+      router.replace('/(dashboard)');
+    } catch (error: any) {
+      Alert.alert('Login Failed', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   };
 
