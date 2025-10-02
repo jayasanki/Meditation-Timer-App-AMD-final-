@@ -24,7 +24,24 @@ export default function LoginScreen() {
   
   };
 
-  return (
-  
+ return (
+    <KeyboardAvoidingView 
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.content}>
+          {/* Header Section */}
+          <View style={styles.header}>
+            <Text style={styles.title}>🧘 Meditation Timer</Text>
+            <Text style={styles.subtitle}>Find your inner peace</Text>
+          </View>
 
-);
+          
+          
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
