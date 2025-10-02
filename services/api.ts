@@ -55,7 +55,34 @@ export const meditationApi = {
       });
     } catch (error) {
       console.error('Error getting sessions:', error);
-      throw error;
+      throw new Error('Failed to fetch meditation sessions');
+    }
+  },
+
+  // Get a single session by ID
+  async getSession(sessionId: string): Promise<MeditationSession | null> {
+    try {
+      const sessionRef = doc(db, 'meditationSessions', sessionId);
+      const sessionSnap = await getDoc(sessionRef);
+      
+      if (sessionSnap.exists()) {
+        const data = sessionSnap.data();
+        return {
+          id: sessionSnap.id,
+          userId: data.userId,
+          duration: data.duration,
+          actualDuration: data.actualDuration,
+          completed: data.completed,
+          notes: data.notes,
+          createdAt: data.createdAt.toDate().toISOString(),
+          completedAt: data.completedAt?.toDate().toISOString()
+        } as MeditationSession;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Error getting session:', error);
+      throw new Error('Failed to fetch meditation session');
     }
   },
 
