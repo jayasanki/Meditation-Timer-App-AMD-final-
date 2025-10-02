@@ -119,6 +119,31 @@ export const authService = {
     };
   },
 
+// Send password reset email
+  async resetPassword(email: string): Promise<void> {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error: any) {
+      console.error('Password reset error:', error);
+      
+      let errorMessage = 'Failed to send reset email. Please try again.';
+      
+      switch (error.code) {
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address.';
+          break;
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection.';
+          break;
+      }
+      
+      throw new Error(errorMessage);
+    }
+  },
+
 };
 
 // Export for use in other parts of the application
