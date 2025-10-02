@@ -166,6 +166,24 @@ export default function RegisterScreen() {
               </Text>
             </View>
 
+            {/* Create Account Button */}
+            <TouchableOpacity 
+              style={[
+                styles.button, 
+                loading && styles.buttonDisabled,
+                (!name || !email || !password || !confirmPassword || !passwordsMatch) && styles.buttonDisabled
+              ]}
+              onPress={handleRegister}
+              disabled={loading || !name || !email || !password || !confirmPassword || !passwordsMatch}
+            >
+              {loading ? (
+                <ActivityIndicator color="white" size="small" />
+              ) : (
+                <Text style={styles.buttonText}>Create Account</Text>
+              )}
+            </TouchableOpacity>
+
+
             
 
 
