@@ -119,6 +119,31 @@ export default function RegisterScreen() {
               )}
             </View>
 
+            {/* Confirm Password Input */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Confirm Password</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  confirmPassword.length > 0 && 
+                  (passwordsMatch ? styles.inputValid : styles.inputError)
+                ]}
+                placeholder="Confirm your password"
+                placeholderTextColor="#999"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry={!showConfirmPassword}
+                autoComplete="password-new"
+              />
+              <TouchableOpacity 
+                style={styles.showPasswordButton}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <Text style={styles.showPasswordText}>
+                  {showConfirmPassword ? 'Hide' : 'Show'}
+                </Text>
+              </TouchableOpacity>
+
 
           
         </View>
