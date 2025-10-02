@@ -105,6 +105,20 @@ export const authService = {
       throw new Error('Logout failed. Please try again.');
     }
   },
+
+// Get current user
+  getCurrentUser(): User | null {
+    const user = auth.currentUser;
+    if (!user) return null;
+
+    return {
+      id: user.uid,
+      email: user.email!,
+      name: user.displayName || user.email?.split('@')[0] || 'User',
+      createdAt: new Date().toISOString()
+    };
+  },
+
 };
 
 // Export for use in other parts of the application
