@@ -82,6 +82,13 @@ export default function RegisterScreen() {
       [{ text: 'OK' }]
     );
   };
+    const getPasswordStrength = (pass: string) => {
+    if (pass.length === 0) return { strength: 0, text: '', color: '#e9ecef' };
+    if (pass.length < 6) return { strength: 1, text: 'Weak', color: '#dc3545' };
+    if (pass.length < 8) return { strength: 2, text: 'Fair', color: '#fd7e14' };
+    if (pass.length < 10) return { strength: 3, text: 'Good', color: '#ffc107' };
+    return { strength: 4, text: 'Strong', color: '#28a745' };
+  };
 
   
 
