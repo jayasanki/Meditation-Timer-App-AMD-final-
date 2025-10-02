@@ -40,4 +40,9 @@ export default function AuthLayout() {
     </View>
   );
 }
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa'
+  }
+});
