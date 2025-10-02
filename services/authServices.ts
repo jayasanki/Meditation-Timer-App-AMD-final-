@@ -157,6 +157,36 @@ export const authService = {
       throw new Error('Failed to update profile. Please try again.');
     }
   },
+ // Update user email
+  async updateUserEmail(newEmail: string): Promise<void> {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('No user logged in');
+      }
+
+      await updateEmail(user, newEmail);
+    } catch (error: any) {
+      console.error('Email update error:', error);
+      
+      let errorMessage = 'Failed to update email. Please try again.';
+      
+      switch (error.code) {
+        case 'auth/requires-recent-login':
+          errorMessage = 'Please log in again to update your email.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address.';
+          break;
+        case 'auth/email-already-in-use':
+          errorMessage = 'This email is already in use.';
+          break;
+      }
+      
+      throw new Error(errorMessage);
+    }
+  },
+
 };
 
 // Export for use in other parts of the application
