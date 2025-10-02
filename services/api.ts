@@ -90,10 +90,22 @@ export const meditationApi = {
   async updateSession(sessionId: string, updates: Partial<MeditationSession>): Promise<void> {
     try {
       const sessionRef = doc(db, 'meditationSessions', sessionId);
-      await updateDoc(sessionRef, updates);
+      
+      // Convert date strings back to Timestamp if needed
+      const firestoreUpdates: any = { ...updates };
+      
+      if (updates.createdAt) {
+        firestoreUpdates.createdAt = Timestamp.fromDate(new Date(updates.createdAt));
+      }
+      
+      if (updates.completedAt) {
+        firestoreUpdates.completedAt = Timestamp.fromDate(new Date(updates.completedAt));
+      }
+      
+      await updateDoc(sessionRef, firestoreUpdates);
     } catch (error) {
       console.error('Error updating session:', error);
-      throw error;
+      throw new Error('Failed to update meditation session');
     }
   },
  
