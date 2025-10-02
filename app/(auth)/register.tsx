@@ -49,6 +49,31 @@ export default function RegisterScreen() {
       return;
     }
 
+     // Name validation
+    if (name.length < 2) {
+      Alert.alert('Error', 'Please enter your full name');
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      await register(email, password, name);
+      Alert.alert(
+        'Success', 
+        'Account created successfully!', 
+        [{ text: 'OK', onPress: () => router.replace('/(dashboard)') }]
+      );
+    } catch (error: any) {
+      Alert.alert('Registration Failed', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  
+
   return (
     <KeyboardAvoidingView 
       style={styles.container}
