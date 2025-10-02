@@ -116,6 +116,17 @@ export default function LoginScreen() {
               <Text style={styles.dividerText}>or</Text>
               <View style={styles.dividerLine} />
             </View>
+
+            {/* Sign Up Link */}
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>Don't have an account? </Text>
+              <Link href="/(auth)/register" asChild>
+                <TouchableOpacity>
+                  <Text style={styles.signupLink}>Sign up</Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
+          </View>
           
       </ScrollView>
     </KeyboardAvoidingView>
