@@ -70,7 +70,18 @@ export default function RegisterScreen() {
       setLoading(false);
     }
   };
-
+  const handleDemoFill = () => {
+    setName('Demo User');
+    setEmail('demo@example.com');
+    setPassword('password123');
+    setConfirmPassword('password123');
+    
+    Alert.alert(
+      'Demo Data',
+      'Demo credentials filled. Click Create Account to continue.',
+      [{ text: 'OK' }]
+    );
+  };
 
   
 
