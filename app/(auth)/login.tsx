@@ -100,6 +100,15 @@ export default function LoginScreen() {
                 <Text style={styles.buttonText}>Sign In</Text>
               )}
             </TouchableOpacity>
+
+             {/* Demo Login Button */}
+            <TouchableOpacity 
+              style={styles.demoButton}
+              onPress={handleDemoLogin}
+              disabled={loading}
+            >
+              <Text style={styles.demoButtonText}>Use Demo Account</Text>
+            </TouchableOpacity>
           
       </ScrollView>
     </KeyboardAvoidingView>
