@@ -96,7 +96,15 @@ export const authService = {
       throw new Error(errorMessage);
     }
   },
-
+ // Logout user
+  async logout(): Promise<void> {
+    try {
+      await signOut(auth);
+    } catch (error: any) {
+      console.error('Logout error:', error);
+      throw new Error('Logout failed. Please try again.');
+    }
+  },
 };
 
 // Export for use in other parts of the application
