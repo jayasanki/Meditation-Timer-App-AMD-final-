@@ -84,7 +84,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     saveTimerState();
   }, [timerState]);
 
-  
+  const loadTimerState = async () => {
+    try {
+      const savedTimerState = await AsyncStorage.getItem(STORAGE_KEYS.TIMER_STATE);
+      if (savedTimerState) {
+        setTimerState(JSON.parse(savedTimerState));
+      }
+    } catch (error) {
+      console.error('Error loading timer state:', error);
+    }
+  };
+
+  const saveTimerState = async () => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.TIMER_STATE, JSON.stringify(timerState));
+    } catch (error) {
+      console.error('Error saving timer state:', error);
+    }
+  };
+
+   const loadSessions = async (userId: string) => {
+    try {
+      const userSessions = await meditationApi.getSessions(userId);
+      setSessions(userSessions);
+    } catch (error) {
+      console.error('Error loading sessions:', error);
+      // Fallback to local storage if online fails
+      await loadSessionsFromStorage();
+    }
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
