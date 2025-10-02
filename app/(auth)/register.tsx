@@ -200,7 +200,19 @@ export default function RegisterScreen() {
             </View>
 
 
-            
+            {/* Sign In Link */}
+            <View style={styles.signinContainer}>
+              <Text style={styles.signinText}>Already have an account? </Text>
+              <Link href="/(auth)/login" asChild>
+                <TouchableOpacity>
+                  <Text style={styles.signinLink}>Sign in</Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
+          </View>
+
+
+
 
 
 
