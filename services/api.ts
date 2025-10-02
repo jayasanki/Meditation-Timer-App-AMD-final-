@@ -31,6 +31,28 @@ export const meditationApi = {
       throw new Error('Failed to create meditation session');
     }
   },
+   // Get all sessions for a user
+  async getSessions(userId: string): Promise<MeditationSession[]> {
+    try {
+      const q = query(
+        collection(db, 'meditationSessions'),
+        where('userId', '==', userId),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt.toDate().toISOString(),
+        completedAt: doc.data().completedAt?.toDate().toISOString()
+      })) as MeditationSession[];
+    } catch (error) {
+      console.error('Error getting sessions:', error);
+      throw error;
+    }
+  },
+
 
  
 };
