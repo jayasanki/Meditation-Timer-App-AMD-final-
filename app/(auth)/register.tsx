@@ -211,14 +211,12 @@ export default function RegisterScreen() {
             </View>
           </View>
 
-
-
-
-
-
-
-
-          
+            {/* Footer */}
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              By creating an account, you agree to our Terms of Service and Privacy Policy
+            </Text>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
