@@ -48,7 +48,19 @@ export default function RegisterScreen() {
             <Text style={styles.formTitle}>Join Our Community</Text>
             <Text style={styles.formSubtitle}>Create your account to begin</Text>
             
-            
+            {/* Name Input */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Full Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your full name"
+                placeholderTextColor="#999"
+                value={name}
+                onChangeText={setName}
+                autoComplete="name"
+                autoCapitalize="words"
+              />
+            </View>
 
             
 
