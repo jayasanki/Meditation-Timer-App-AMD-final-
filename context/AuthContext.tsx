@@ -153,6 +153,59 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+   const calculateCurrentStreak = (completedSessions: MeditationSession[]): number => {
+    if (completedSessions.length === 0) return 0;
+
+    let streak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (let i = 0; i < completedSessions.length; i++) {
+      const sessionDate = new Date(completedSessions[i].completedAt || completedSessions[i].createdAt);
+      sessionDate.setHours(0, 0, 0, 0);
+
+      const diffTime = today.getTime() - sessionDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === streak) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  };
+
+  const calculateLongestStreak = (completedSessions: MeditationSession[]): number => {
+    if (completedSessions.length === 0) return 0;
+
+    let longestStreak = 0;
+    let currentStreak = 1;
+
+    // Sort sessions by date
+    const sortedSessions = [...completedSessions].sort((a, b) => 
+      new Date(a.completedAt || a.createdAt).getTime() - new Date(b.completedAt || b.createdAt).getTime()
+    );
+
+    for (let i = 1; i < sortedSessions.length; i++) {
+      const currentDate = new Date(sortedSessions[i].completedAt || sortedSessions[i].createdAt);
+      const previousDate = new Date(sortedSessions[i - 1].completedAt || sortedSessions[i - 1].createdAt);
+
+      const diffTime = currentDate.getTime() - previousDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        currentStreak++;
+      } else {
+        longestStreak = Math.max(longestStreak, currentStreak);
+        currentStreak = 1;
+      }
+    }
+
+    return Math.max(longestStreak, currentStreak);
+  };
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
