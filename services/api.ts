@@ -118,6 +118,36 @@ export const meditationApi = {
       throw new Error('Failed to delete meditation session');
     }
   },
+
+   // Get user statistics
+  async getUserStats(userId: string): Promise<{
+    totalSessions: number;
+    totalMinutes: number;
+    averageSessionTime: number;
+    completedSessions: number;
+  }> {
+    try {
+      const sessions = await this.getSessions(userId);
+      const completedSessions = sessions.filter(session => session.completed);
+      
+      const totalSessions = completedSessions.length;
+      const totalMinutes = Math.floor(
+        completedSessions.reduce((sum, session) => sum + session.actualDuration, 0) / 60
+      );
+      const averageSessionTime = totalSessions > 0 ? Math.floor(totalMinutes / totalSessions) : 0;
+
+      return {
+        totalSessions,
+        totalMinutes,
+        averageSessionTime,
+        completedSessions: totalSessions
+      };
+    } catch (error) {
+      console.error('Error getting user stats:', error);
+      throw new Error('Failed to fetch user statistics');
+    }
+  },
+
  
 };
 
