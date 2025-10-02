@@ -127,7 +127,14 @@ export default function LoginScreen() {
               </Link>
             </View>
           </View>
-          
+          {/* Footer */}
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              By continuing, you agree to our Terms of Service and Privacy Policy
+            </Text>
+          </View>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
+}
