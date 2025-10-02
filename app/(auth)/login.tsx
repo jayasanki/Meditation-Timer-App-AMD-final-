@@ -52,6 +52,16 @@ export default function LoginScreen() {
       [{ text: 'OK' }]
     );
   };
+
+    const handleDemoLogin = async () => {
+    setEmail('demo@example.com');
+    setPassword('password123');
+    
+    Alert.alert(
+      'Demo Login',
+      'Using demo credentials. Click Sign In to continue.',
+      [{ text: 'OK' }]
+    );
   
   };
 
