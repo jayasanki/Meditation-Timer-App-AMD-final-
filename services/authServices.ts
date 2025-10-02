@@ -233,6 +233,10 @@ export const authService = {
       }
     });
   },
+   // Get current Firebase user (for advanced operations)
+  getFirebaseUser(): FirebaseUser | null {
+    return auth.currentUser;
+  }
 
 };
 
