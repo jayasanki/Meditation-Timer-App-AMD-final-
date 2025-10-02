@@ -98,6 +98,27 @@ export default function RegisterScreen() {
                 </Text>
               </TouchableOpacity>
 
+              {/* Password Strength Indicator */}
+              {password.length > 0 && (
+                <View style={styles.passwordStrengthContainer}>
+                  <View style={styles.passwordStrengthBar}>
+                    <View 
+                      style={[
+                        styles.passwordStrengthFill,
+                        { 
+                          width: `${passwordStrength.strength * 25}%`,
+                          backgroundColor: passwordStrength.color
+                        }
+                      ]} 
+                    />
+                  </View>
+                  <Text style={[styles.passwordStrengthText, { color: passwordStrength.color }]}>
+                    {passwordStrength.text}
+                  </Text>
+                </View>
+              )}
+            </View>
+
 
           
         </View>
