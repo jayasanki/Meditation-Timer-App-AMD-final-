@@ -192,6 +192,14 @@ export default function RegisterScreen() {
               <Text style={styles.demoButtonText}>Fill Demo Data</Text>
             </TouchableOpacity>
 
+            {/* Divider */}
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+
             
 
 
