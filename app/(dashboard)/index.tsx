@@ -13,6 +13,13 @@ import { router } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import { PresetDuration } from '@/types';
 
+import React from 'react';
+import { Redirect } from 'expo-router';
+
+export default function Index() {
+  return <Redirect href="/(dashboard)/home" />;
+}
+
 export default function DashboardScreen() {
   const { user, sessions, timerState, setTimerState, stats, refreshSessions, loading } = useAuth();
   const [selectedDuration, setSelectedDuration] = useState<PresetDuration>(10);
