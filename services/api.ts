@@ -1,4 +1,3 @@
- 
 import { 
   collection, 
   addDoc, 
@@ -13,8 +12,8 @@ import {
   getDoc,
   DocumentData 
 } from 'firebase/firestore';
-import { db } from '../config/firebase'
-import { MeditationSession, User } from '../types'
+import { db } from '../config/firebase';
+import { MeditationSession, User } from '../types';
 
 export const meditationApi = {
   // Create a new meditation session
@@ -23,7 +22,7 @@ export const meditationApi = {
       const docRef = await addDoc(collection(db, 'meditationSessions'), {
         ...session,
         createdAt: Timestamp.now(),
-        completedAt: session.completedAt ? Timestamp.now() : null
+        completedAt: session.completedAt ? Timestamp.fromDate(new Date(session.completedAt)) : null
       });
       return docRef.id;
     } catch (error) {
@@ -31,7 +30,8 @@ export const meditationApi = {
       throw new Error('Failed to create meditation session');
     }
   },
-   // Get all sessions for a user
+
+  // Get all sessions for a user
   async getSessions(userId: string): Promise<MeditationSession[]> {
     try {
       const q = query(
@@ -40,9 +40,11 @@ export const meditationApi = {
         orderBy('createdAt', 'desc')
       );
       
+      const querySnapshot = await getDocs(q); // Added missing getDocs call
+      
       return querySnapshot.docs.map(doc => {
         const data = doc.data();
-      return {
+        return {
           id: doc.id,
           userId: data.userId,
           duration: data.duration,
@@ -86,7 +88,7 @@ export const meditationApi = {
     }
   },
 
- // Update a session
+  // Update a session
   async updateSession(sessionId: string, updates: Partial<MeditationSession>): Promise<void> {
     try {
       const sessionRef = doc(db, 'meditationSessions', sessionId);
@@ -94,12 +96,18 @@ export const meditationApi = {
       // Convert date strings back to Timestamp if needed
       const firestoreUpdates: any = { ...updates };
       
+      // Remove id and userId from updates as they shouldn't be changed
+      delete firestoreUpdates.id;
+      delete firestoreUpdates.userId;
+      
       if (updates.createdAt) {
         firestoreUpdates.createdAt = Timestamp.fromDate(new Date(updates.createdAt));
       }
       
       if (updates.completedAt) {
         firestoreUpdates.completedAt = Timestamp.fromDate(new Date(updates.completedAt));
+      } else if (updates.completedAt === null) {
+        firestoreUpdates.completedAt = null;
       }
       
       await updateDoc(sessionRef, firestoreUpdates);
@@ -109,7 +117,7 @@ export const meditationApi = {
     }
   },
 
-   // Delete a session
+  // Delete a session
   async deleteSession(sessionId: string): Promise<void> {
     try {
       await deleteDoc(doc(db, 'meditationSessions', sessionId));
@@ -119,7 +127,7 @@ export const meditationApi = {
     }
   },
 
-   // Get user statistics
+  // Get user statistics
   async getUserStats(userId: string): Promise<{
     totalSessions: number;
     totalMinutes: number;
@@ -147,7 +155,8 @@ export const meditationApi = {
       throw new Error('Failed to fetch user statistics');
     }
   },
- // Get recent sessions (last 7 days)
+
+  // Get recent sessions (last 7 days)
   async getRecentSessions(userId: string): Promise<MeditationSession[]> {
     try {
       const oneWeekAgo = new Date();
@@ -178,8 +187,88 @@ export const meditationApi = {
       console.error('Error getting recent sessions:', error);
       throw new Error('Failed to fetch recent sessions');
     }
+  },
+
+  // Get sessions by date range
+  async getSessionsByDateRange(userId: string, startDate: Date, endDate: Date): Promise<MeditationSession[]> {
+    try {
+      const q = query(
+        collection(db, 'meditationSessions'),
+        where('userId', '==', userId),
+        where('createdAt', '>=', Timestamp.fromDate(startDate)),
+        where('createdAt', '<=', Timestamp.fromDate(endDate)),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          userId: data.userId,
+          duration: data.duration,
+          actualDuration: data.actualDuration,
+          completed: data.completed,
+          notes: data.notes,
+          createdAt: data.createdAt.toDate().toISOString(),
+          completedAt: data.completedAt?.toDate().toISOString()
+        } as MeditationSession;
+      });
+    } catch (error) {
+      console.error('Error getting sessions by date range:', error);
+      throw new Error('Failed to fetch sessions by date range');
+    }
+  },
+
+  // Get completed sessions only
+  async getCompletedSessions(userId: string): Promise<MeditationSession[]> {
+    try {
+      const q = query(
+        collection(db, 'meditationSessions'),
+        where('userId', '==', userId),
+        where('completed', '==', true),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          userId: data.userId,
+          duration: data.duration,
+          actualDuration: data.actualDuration,
+          completed: data.completed,
+          notes: data.notes,
+          createdAt: data.createdAt.toDate().toISOString(),
+          completedAt: data.completedAt?.toDate().toISOString()
+        } as MeditationSession;
+      });
+    } catch (error) {
+      console.error('Error getting completed sessions:', error);
+      throw new Error('Failed to fetch completed sessions');
+    }
+  },
+
+  // Get sessions count by duration
+  async getSessionsCountByDuration(userId: string): Promise<Record<number, number>> {
+    try {
+      const sessions = await this.getSessions(userId);
+      const completedSessions = sessions.filter(session => session.completed);
+      
+      const durationCount: Record<number, number> = {};
+      completedSessions.forEach(session => {
+        const duration = session.duration;
+        durationCount[duration] = (durationCount[duration] || 0) + 1;
+      });
+      
+      return durationCount;
+    } catch (error) {
+      console.error('Error getting sessions count by duration:', error);
+      throw new Error('Failed to fetch sessions count by duration');
+    }
   }
- 
+
 };
 
 // Export for use in other parts of the application

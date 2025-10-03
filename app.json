@@ -55,6 +55,10 @@
     "runtimeVersion": {
       "policy": "sdkVersion"
     },
+    "splash": {
+  "backgroundColor": "#4A6572",
+  "resizeMode": "contain"
+},
     "updates": {
       "url": "https://u.expo.dev/your-project-id-here",
       "fallbackToCacheTimeout": 0

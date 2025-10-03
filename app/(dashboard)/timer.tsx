@@ -13,6 +13,7 @@ import {
 import { router } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import { MeditationTimer } from '@/utils/timerUtils';
+import { TimerState } from '@/types';
 
 const { width } = Dimensions.get('window');
 
@@ -33,7 +34,11 @@ export default function TimerScreen() {
       timerState.totalDuration / 60, // Convert back to minutes
       (remaining) => {
         setTimeRemaining(remaining);
-        setTimerState(prev => ({ ...prev, timeRemaining: remaining }));
+        // Fixed: Pass TimerState object instead of function
+        setTimerState({
+          ...timerState,
+          timeRemaining: remaining
+        });
         updateProgressAnimation();
       },
       onTimerComplete
@@ -120,7 +125,12 @@ export default function TimerScreen() {
       setIsRunning(true);
       setIsPaused(false);
       setShowCompletion(false);
-      setTimerState(prev => ({ ...prev, isRunning: true, isPaused: false }));
+      // Fixed: Pass TimerState object
+      setTimerState({
+        ...timerState,
+        isRunning: true,
+        isPaused: false
+      });
     }
   };
 
@@ -129,7 +139,12 @@ export default function TimerScreen() {
       timerRef.current.pause();
       setIsRunning(false);
       setIsPaused(true);
-      setTimerState(prev => ({ ...prev, isRunning: false, isPaused: true }));
+      // Fixed: Pass TimerState object
+      setTimerState({
+        ...timerState,
+        isRunning: false,
+        isPaused: true
+      });
     }
   };
 
@@ -140,12 +155,13 @@ export default function TimerScreen() {
       setIsRunning(false);
       setIsPaused(false);
       setShowCompletion(false);
-      setTimerState(prev => ({ 
-        ...prev, 
-        isRunning: false, 
+      // Fixed: Pass TimerState object
+      setTimerState({
+        ...timerState,
+        isRunning: false,
         isPaused: false,
         timeRemaining: timerState.totalDuration
-      }));
+      });
       progressAnim.setValue(0);
       scaleAnim.setValue(1);
     }

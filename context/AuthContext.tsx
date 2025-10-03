@@ -1,6 +1,5 @@
- 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, MeditationSession, TimerState, MeditationStats } from '@/types';
+import { User, MeditationSession, TimerState, MeditationStats, PresetDuration } from '@/types';
 import { authService } from '@/services/authServices';
 import { meditationApi } from '@/services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -42,12 +41,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     totalDuration: 0
   });
   const [loading, setLoading] = useState(true);
+  
+  // Complete initial stats with all required properties
   const [stats, setStats] = useState<MeditationStats>({
     totalSessions: 0,
     totalMinutes: 0,
     averageSessionTime: 0,
     currentStreak: 0,
-    longestStreak: 0
+    longestStreak: 0,
+    favoriteDuration: 10, // Default preset duration
+    sessionsThisWeek: 0,
+    sessionsThisMonth: 0
   });
 
   useEffect(() => {
@@ -103,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-   const loadSessions = async (userId: string) => {
+  const loadSessions = async (userId: string) => {
     try {
       const userSessions = await meditationApi.getSessions(userId);
       setSessions(userSessions);
@@ -113,7 +117,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await loadSessionsFromStorage();
     }
   };
-   const loadSessionsFromStorage = async () => {
+
+  const loadSessionsFromStorage = async () => {
     try {
       const savedSessions = await AsyncStorage.getItem(STORAGE_KEYS.USER_SESSIONS);
       if (savedSessions) {
@@ -140,41 +145,117 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
     const averageSessionTime = totalSessions > 0 ? Math.floor(totalMinutes / totalSessions) : 0;
 
-    // Calculate streak (simplified version)
+    // Calculate all required statistics
     const currentStreak = calculateCurrentStreak(completedSessions);
     const longestStreak = calculateLongestStreak(completedSessions);
+    const favoriteDuration = calculateFavoriteDuration(completedSessions);
+    const sessionsThisWeek = calculateSessionsThisWeek(completedSessions);
+    const sessionsThisMonth = calculateSessionsThisMonth(completedSessions);
 
+    // Set complete stats object with all required properties
     setStats({
       totalSessions,
       totalMinutes,
       averageSessionTime,
       currentStreak,
-      longestStreak
+      longestStreak,
+      favoriteDuration,
+      sessionsThisWeek,
+      sessionsThisMonth
     });
   };
 
-   const calculateCurrentStreak = (completedSessions: MeditationSession[]): number => {
+  const calculateFavoriteDuration = (completedSessions: MeditationSession[]): PresetDuration => {
+    if (completedSessions.length === 0) return 10; // Default to 10 minutes
+
+    const durationCount: Record<number, number> = {};
+    
+    // Count occurrences of each duration
+    completedSessions.forEach(session => {
+      const duration = session.duration;
+      durationCount[duration] = (durationCount[duration] || 0) + 1;
+    });
+
+    // Find the duration with the highest count
+    let favoriteDuration: PresetDuration = 10;
+    let maxCount = 0;
+
+    Object.entries(durationCount).forEach(([duration, count]) => {
+      if (count > maxCount) {
+        maxCount = count;
+        favoriteDuration = parseInt(duration) as PresetDuration;
+      }
+    });
+
+    return favoriteDuration;
+  };
+
+  const calculateSessionsThisWeek = (completedSessions: MeditationSession[]): number => {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    oneWeekAgo.setHours(0, 0, 0, 0);
+    
+    return completedSessions.filter(session => {
+      const sessionDate = new Date(session.completedAt || session.createdAt);
+      sessionDate.setHours(0, 0, 0, 0);
+      return sessionDate >= oneWeekAgo;
+    }).length;
+  };
+
+  const calculateSessionsThisMonth = (completedSessions: MeditationSession[]): number => {
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    oneMonthAgo.setHours(0, 0, 0, 0);
+    
+    return completedSessions.filter(session => {
+      const sessionDate = new Date(session.completedAt || session.createdAt);
+      sessionDate.setHours(0, 0, 0, 0);
+      return sessionDate >= oneMonthAgo;
+    }).length;
+  };
+
+  const calculateCurrentStreak = (completedSessions: MeditationSession[]): number => {
     if (completedSessions.length === 0) return 0;
 
     let streak = 0;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    for (let i = 0; i < completedSessions.length; i++) {
-      const sessionDate = new Date(completedSessions[i].completedAt || completedSessions[i].createdAt);
+    // Sort sessions by date (newest first)
+    const sortedSessions = [...completedSessions].sort((a, b) => 
+      new Date(b.completedAt || b.createdAt).getTime() - new Date(a.completedAt || a.createdAt).getTime()
+    );
+
+    let currentDate = today;
+    
+    for (let i = 0; i < sortedSessions.length; i++) {
+      const sessionDate = new Date(sortedSessions[i].completedAt || sortedSessions[i].createdAt);
       sessionDate.setHours(0, 0, 0, 0);
 
-      const diffTime = today.getTime() - sessionDate.getTime();
+      const diffTime = currentDate.getTime() - sessionDate.getTime();
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-      if (diffDays === streak) {
+      if (diffDays === 0) {
+        // Session from today, continue checking
+        continue;
+      } else if (diffDays === 1) {
+        // Session from yesterday, increment streak
         streak++;
+        currentDate = sessionDate;
       } else {
+        // Gap in streak, break
         break;
       }
     }
 
-    return streak;
+    // If we have sessions from today, add 1 to streak
+    const hasSessionToday = sortedSessions.some(session => {
+      const sessionDate = new Date(session.completedAt || session.createdAt);
+      sessionDate.setHours(0, 0, 0, 0);
+      return sessionDate.getTime() === today.getTime();
+    });
+
+    return hasSessionToday ? streak + 1 : streak;
   };
 
   const calculateLongestStreak = (completedSessions: MeditationSession[]): number => {
@@ -183,21 +264,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let longestStreak = 0;
     let currentStreak = 1;
 
-    // Sort sessions by date
+    // Sort sessions by date (oldest first)
     const sortedSessions = [...completedSessions].sort((a, b) => 
       new Date(a.completedAt || a.createdAt).getTime() - new Date(b.completedAt || b.createdAt).getTime()
     );
 
     for (let i = 1; i < sortedSessions.length; i++) {
       const currentDate = new Date(sortedSessions[i].completedAt || sortedSessions[i].createdAt);
+      currentDate.setHours(0, 0, 0, 0);
+      
       const previousDate = new Date(sortedSessions[i - 1].completedAt || sortedSessions[i - 1].createdAt);
+      previousDate.setHours(0, 0, 0, 0);
 
       const diffTime = currentDate.getTime() - previousDate.getTime();
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays === 1) {
+        // Consecutive days
         currentStreak++;
+      } else if (diffDays === 0) {
+        // Same day, don't break streak but don't increment either
+        continue;
       } else {
+        // Gap in streak
         longestStreak = Math.max(longestStreak, currentStreak);
         currentStreak = 1;
       }
@@ -206,7 +295,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return Math.max(longestStreak, currentStreak);
   };
 
-   const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
       setLoading(true);
       const userData = await authService.login(email, password);
@@ -252,7 +341,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-   const addSession = async (sessionData: Omit<MeditationSession, 'id' | 'userId'>) => {
+  const addSession = async (sessionData: Omit<MeditationSession, 'id' | 'userId'>) => {
     if (!user) throw new Error('User not authenticated');
 
     try {
@@ -367,7 +456,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     updateUserProfile,
     resetPassword
   };
-
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
