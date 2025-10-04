@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Meditation Timer",
-    "slug": "meditation-timer", 
+    "slug": "meditation-timer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,60 +9,29 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#4A6572"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.meditation.timer",
-      "buildNumber": "1.0.0"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#4A6572"
       },
-      "package": "com.meditation.timer",
-      "versionCode": 1
+      "package": "com.meditation.timer"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
-    
     "plugins": [
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/images/notification-icon.png",
-          "color": "#ffffff",
-          "defaultChannel": "meditation-reminders"
-        }
-      ],
-      [
-        "expo-router",
-        {
-          "origin": "meditation-timer://"
-        }
-      ]
+      "expo-router"
     ],
-    "extra": {
-      "eas": {
-        "projectId": "your-project-id-here"
-      }
-    },
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
-    "splash": {
-  "backgroundColor": "#4A6572",
-  "resizeMode": "contain"
-},
-    "updates": {
-      "url": "https://u.expo.dev/your-project-id-here",
-      "fallbackToCacheTimeout": 0
-    },
+    "scheme": "meditation-timer",
     "newArchEnabled": false
   }
 }

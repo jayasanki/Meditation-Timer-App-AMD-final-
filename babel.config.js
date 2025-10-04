@@ -19,17 +19,18 @@ module.exports = function(api) {
             '.ios.tsx'
           ],
           alias: {
-            '@': './src',
-            '@components': './src/components',
-            '@screens': './src/screens',
-            '@config': './src/config',
-            '@assets': './src/assets',
-            '@utils': './src/utils',
-            '@hooks': './src/hooks',
+            '@': './',
+            '@/components': './components',
+            '@/screens': './app',
+            '@/context': './context',
+            '@/services': './services',
+            '@/types': './types',
+            '@/utils': './utils',
+            '@/config': './config',
+            '@/assets': './assets'
           }
         }
-      ],
-      'react-native-reanimated/plugin'
+      ]
     ]
   };
 };
